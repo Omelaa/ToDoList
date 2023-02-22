@@ -1,0 +1,42 @@
+
+.header {
+  box-shadow: 5px 5px 10px #d9d9d9, -5px -5px 10px #ffffff;
+  border-radius: 20px;
+  padding: 15px;
+  margin-bottom: 20px;
+
+  &__list {
+    display: flex;
+    grid-gap: 20px;
+  }
+
+  &__btn {
+    box-shadow: 5px 5px 10px #d9d9d9, -5px -5px 10px #ffffff;
+    padding: 10px;
+    border-radius: 15px;
+
+    &:hover {
+      box-shadow: 3px 3px 5px #d9d9d9, -3px -3px 5px #ffffff;
+    }
+  }
+
+  &__nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__icon {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__icons-plus{
+    transition: 0.5s transform;
+    &:hover{
+      transform: rotateZ(180deg);
+    }
+  }
+}
