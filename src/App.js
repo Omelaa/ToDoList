@@ -4,26 +4,34 @@ import './App.scss';
 import {Header} from "./components/Header/Header";
 
 function App() {
-    const [boards, setBoards] = useState([
-        {id: 1, title: 'Зробити', items: [{id: 1, title: 'Піти гуляти'}, {id: 2, title: 'Піти в магазин'}]},
-        {id: 2, title: 'Доробити', items: [{id: 3, title: 'Піти 1'}, {id: 4, title: 'Піти в 12'}]},
-        {id: 3, title: 'Поробити', items: [{id: 5, title: 'Піти 2'}, {id: 6, title: 'Піти в 13'}]},
-        {id: 4, title: 'Не робити', items: [{id: 7, title: 'Піти 3'}, {id: 8, title: 'Піти в 14'}]},
-    ]);
+    const [boards, setBoards] = useState([]);
 
     const [currentBoard, setCurrentBoard] = useState(null);
     const [currentItem, setCurrentItem] = useState(null);
 
+    const [inputValue, setInputValue] = useState("");
+
+    const isOpenElement = (board) => {
+        setBoards(prevState => prevState.map(b => {
+            if (b.id === board.id) {
+                return {...b, isAddForm: !b.isAddForm};
+            }
+            return b;
+        }));
+        setInputValue('');
+    };
+
     function saveDataToStorage(key, data) {
         localStorage.setItem(key, JSON.stringify(data));
-    }
+    };
 
     function loadDataFromStorage(key) {
         const data = localStorage.getItem(key);
         return data ? JSON.parse(data) : [];
-    }
+    };
 
     useEffect(() => {
+        // saveDataToStorage('boards', []);
         const boardsData = loadDataFromStorage('boards');
         setBoards(boardsData);
     }, []);
@@ -86,26 +94,55 @@ function App() {
     };
 
 
+    function handleTitleChange(e, item) {
+        item.title = e.target.innerText;
+        setBoards([...boards]);
+        saveDataToStorage('boards', boards);
+    };
+
+    const addBoard = (e, board, id) => {
+        e.preventDefault();
+        board.items.push({id: Date.now(), title: inputValue});
+        setBoards([...boards]);
+        saveDataToStorage('boards', boards);
+        setInputValue('');
+    };
+
+    const addMainBoard = () => {
+        setBoards([...boards, {id: Date.now(), title: 'Text', items: []}]);
+        saveDataToStorage('boards', boards);
+        console.log(boards)
+    };
+
+    const handleInputChange = (e) => {
+        setInputValue(e.target.value);
+    };
+
     return (
         <div className="App">
             <div className={'container'}>
-                <Header/>
+                <Header addMainBoard={addMainBoard}/>
                 <div className={'todo'}>
-                    <div className={'todo__list'}>
+                    <ul className={'todo__list'}>
                         {
-                            boards.map((board) =>
-                                <div
+                            boards && boards.map((board) =>
+                                <li
                                     key={board.id}
                                     className={'todo__item'}
                                     onDragOver={(e) => dragOverHandler(e)}
                                     onDrop={(e) => dropCardHandler(e, board)}
                                 >
-                                    <h3 className={'todo__title'}>
-                                        {board.title}
+                                    <h3
+                                        className={'todo__title'}
+                                        contentEditable={true}
+                                        suppressContentEditableWarning={true}
+                                        onInput={(e) => handleTitleChange(e, board)}
+                                    >
+                                        {!!board.title ? board.title : 'Text Change'}
                                     </h3>
-                                    <div className={'todo__second-list'}>
-                                        {board.items.map(value =>
-                                            <div
+                                    <ul className={'todo__second-list'}>
+                                        {board && board.items.map(value =>
+                                            <li
                                                 key={value.id}
                                                 className={'todo__second-item'}
                                                 draggable={true}
@@ -115,14 +152,41 @@ function App() {
                                                 onDragEnd={(e) => dragEndHandler(e, value)}
                                                 onDrop={(e) => dropHandler(e, board, value)}
                                             >
+                                                <span
+                                                    className={'todo__second-title'}
+                                                    contentEditable={true}
+                                                    suppressContentEditableWarning={true}
+                                                    onInput={(e) => handleTitleChange(e, value)}>
                                                 {value.title}
-                                            </div>
+                                                </span>
+                                            </li>
                                         )}
-                                    </div>
-                                </div>
+                                        {
+                                            <li>
+                                                {board.isAddForm &&
+                                                    <form className={"todo__form"} onSubmit={(e) => addBoard(e, board)}>
+                                                        <textarea className={"todo__textarea"}
+                                                                  placeholder={'Enter some text...'} value={inputValue}
+                                                                  onChange={handleInputChange}/>
+                                                        <label className={"todo__btns"}>
+                                                            <button className={"todo__btn todo__btn-add"}
+                                                                    type={'submit'}>Add
+                                                            </button>
+                                                            <button className={"todo__btn todo__btn-cancel"} type={'button'}
+                                                                    onClick={() => isOpenElement(board)}>Delete
+                                                            </button>
+                                                        </label>
+                                                    </form>
+                                                }
+                                                {!board.isAddForm &&
+                                                    <button onClick={() => isOpenElement(board)}>add card</button>}
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
                             )
                         }
-                    </div>
+                    </ul>
                 </div>
             </div>
         </div>

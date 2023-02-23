@@ -3,15 +3,8 @@ import {RiAddFill} from 'react-icons/ri';
 
 import './Header.scss';
 
-import {Modal} from "../Modal/Modal";
 
-const Header = () => {
-    const [isOpen, setIsOpen] = useState(false);
-
-    const isOpenModal = () => {
-        setIsOpen(!isOpen);
-        console.log(isOpen);
-    }
+const Header = ({addMainBoard}) => {
 
     return (
         <>
@@ -19,20 +12,11 @@ const Header = () => {
                 <nav className="header__nav">
                     <ul className="header__list">
                         <li>
-                            <button className="header__btn">lorem 1</button>
-                        </li>
-                        <li>
-                            <button className="header__btn">lorem 2</button>
-                        </li>
-                        <li>
-                            <button className="header__btn">lorem 3</button>
-                        </li>
-                        <li>
-                            <button className="header__btn">lorem 4</button>
+                            <button className="header__btn">Button</button>
                         </li>
                     </ul>
                     <ul className="header__icons header__icons-plus">
-                        <li onClick={isOpenModal}>
+                        <li onClick={addMainBoard}>
                             <button className="header__icon">
                                 <RiAddFill size={35} color="#bcbcbc"/>
                             </button>
@@ -40,7 +24,7 @@ const Header = () => {
                     </ul>
                 </nav>
             </header>
-            {isOpen && <Modal isOpen={isOpen}/>}
+            {/*{isOpen && <Modal isOpen={isOpen}/>}*/}
         </>
     );
 };
