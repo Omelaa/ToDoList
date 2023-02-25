@@ -1,10 +1,17 @@
-import {useState} from "react";
+import {useDispatch} from "react-redux";
 import {RiAddFill} from 'react-icons/ri';
 
 import './Header.scss';
 
+import {todoActions} from "../../redux/slices/todo.slice";
 
-const Header = ({addMainBoard}) => {
+
+const Header = () => {
+    const dispatch = useDispatch();
+
+    const handleAddBoard = () => {
+        dispatch(todoActions.addBoard());
+    };
 
     return (
         <>
@@ -16,7 +23,7 @@ const Header = ({addMainBoard}) => {
                         </li>
                     </ul>
                     <ul className="header__icons header__icons-plus">
-                        <li onClick={addMainBoard}>
+                        <li onClick={handleAddBoard}>
                             <button className="header__icon">
                                 <RiAddFill size={35} color="#bcbcbc"/>
                             </button>
